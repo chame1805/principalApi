@@ -3,21 +3,23 @@ package application
 import (
 	"fmt"
 	"principalApi/src/domain"
-	infraestructure "principalApi/src/infraestructure/service"
-	//"principalApi/src/infraestructure"
-	// "principalApi/src/infraestructure" // Corrección aquí
 )
 
+// Estructura del caso de uso
 type Create_reservHospital_useCase struct {
-	db          domain.IReservaRepocitory
-	rabbitMQSvc *infraestructure.RabbitMQService // Corrección aquí
+	db                domain.IReservaRepocitory
+	sendMessageUseCase *SendMessageUseCase
 }
 
-// Constructor que recibe la base de datos y el servicio de mensajería
-func NewReservaUseCase(db domain.IReservaRepocitory, rabbitMQSvc *infraestructure.RabbitMQService) *Create_reservHospital_useCase { // Corrección aquí
-	return &Create_reservHospital_useCase{db: db, rabbitMQSvc: rabbitMQSvc}
+// Constructor que recibe la base de datos y el caso de uso para enviar mensajes
+func NewReservaUseCase(db domain.IReservaRepocitory, sendMessageUseCase *SendMessageUseCase) *Create_reservHospital_useCase {
+	return &Create_reservHospital_useCase{
+		db:                db,
+		sendMessageUseCase: sendMessageUseCase, // Se usa correctamente el parámetro recibido
+	}
 }
 
+// Método para ejecutar la creación de la reserva
 func (uc *Create_reservHospital_useCase) Execute(name string, fecha string, hora string, numeroPersonas int, service string) {
 	err := uc.db.Save(name, fecha, hora, numeroPersonas, service)
 	if err != nil {
@@ -25,10 +27,7 @@ func (uc *Create_reservHospital_useCase) Execute(name string, fecha string, hora
 		return
 	}
 
-	// Enviar mensaje a RabbitMQ
+	// Enviar mensaje
 	message := fmt.Sprintf("Reserva creada: Nombre=%s, Fecha=%s, Hora=%s, Personas=%d, Servicio=%s", name, fecha, hora, numeroPersonas, service)
-	err = uc.rabbitMQSvc.SendMessage(message)
-	if err != nil {
-		fmt.Println("Error al enviar mensaje a RabbitMQ:", err)
-	}
+	uc.sendMessageUseCase.Execute(message) // Se usa el campo correcto
 }

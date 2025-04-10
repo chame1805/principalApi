@@ -12,6 +12,7 @@ func NewGetReservaUseCase(db domain.IReservaRepocitory) *GetReservaUseCase {
 	return &GetReservaUseCase{db: db}
 }
 
-func (uc *GetReservaUseCase) Execute(id int) (map[string]interface{}, error) {
-	return uc.db.GetReserva(id) // Pasar el ID a la función GetReserva
+// Modificamos el Execute para obtener todas las reservas.
+func (uc *GetReservaUseCase) Execute() ([]map[string]interface{}, error) {
+	return uc.db.GetAllReservas() // Llamamos a GetAllReservas en vez de GetReserva
 }

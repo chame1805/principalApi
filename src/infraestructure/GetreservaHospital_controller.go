@@ -4,7 +4,6 @@ import (
 	"principalApi/src/application"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 type GetReservHospitalController struct {
@@ -16,21 +15,13 @@ func NewGetReservHospitalController(useCase *application.GetReservaUseCase) *Get
 }
 
 func (rh *GetReservHospitalController) Execute(c *gin.Context) {
-	// Obtener el ID desde los parámetros de la URL
-	idParam := c.Param("id") // Suponiendo que el ID se pasa en la URL como /reservas/:id
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
-		return
-	}
-
-	// Ejecutar el caso de uso con el ID
-	reservas, err := rh.useCase.Execute(id)
+	// Ejecutar el caso de uso para obtener todas las reservas
+	reservas, err := rh.useCase.Execute()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Responder con los datos obtenidos
+	
 	c.JSON(http.StatusOK, gin.H{"reservas": reservas})
 }

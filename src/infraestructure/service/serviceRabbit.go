@@ -14,7 +14,7 @@ type RabbitMQService struct {
 	queue   string
 }
 
-// NewRabbitMQService crea una instancia del servicio RabbitMQ
+
 func NewRabbitMQService() *RabbitMQService {
 	conn, err := amqp.Dial("amqp://chame:chame0104@52.206.28.216:5672/")
 	if err != nil {
@@ -45,8 +45,8 @@ func NewRabbitMQService() *RabbitMQService {
 	}
 }
 
-// SendMessage envía un mensaje a la cola
-func (r *RabbitMQService) SendMessage(message string) error {
+
+func (r *RabbitMQService) Publish(message string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

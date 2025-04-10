@@ -29,13 +29,13 @@ func (rh *CreateReservHospitalController) Execute(c *gin.Context) {
         return
     }
 
-    // Validar que numeroPersonas sea un número válido
+    
     if reserva.NumeroPersonas <= 0 {
         c.JSON(http.StatusBadRequest, gin.H{"error": "El número de personas debe ser mayor que cero"})
         return
     }
 
-    // Validar la fecha
+    
     if _, err := time.Parse("2006-01-02", reserva.Fecha); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Fecha inválida, el formato debe ser YYYY-MM-DD"})
         return
